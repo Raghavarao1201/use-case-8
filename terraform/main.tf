@@ -148,10 +148,10 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 
 resource "aws_lambda_function" "image_processor_lambda" {
   function_name    = "image-processor-lambda-${random_id.suffix.hex}"
-  runtime          = "python3.9" # Choose your desired runtime
-  handler          = "lambda_function.lambda_handler" # Assuming your handler is named this
-  filename         = "./lambda_image_processor.lambda.zip"
-  source_code_hash = ./lambda_image_processor.lambda_zip.output_base64sha256
+  runtime          = "python3.9"
+  handler          = "lambda_function.lambda_handler"
+  filename         = "./lambda_image_processor/lambda.zip"
+  source_code_hash = filebase64sha256("./lambda_image_processor/lambda.zip")
   role             = aws_iam_role.lambda_execution_role.arn
   memory_size      = 256
   timeout          = 30
@@ -166,7 +166,7 @@ resource "aws_lambda_function" "image_processor_lambda" {
     mode = "Active" # Enable X-Ray tracing
   }
 
-  depends_on = [aws_iam_role_policy_attachment.lambda_execution_policy_attachment, data.archive_file.lambda_zip]
+  depends_on = [aws_iam_role_policy_attachment.lambda_execution_policy_attachment]
 
   tags = {
     Name        = "Image Processor Lambda"
