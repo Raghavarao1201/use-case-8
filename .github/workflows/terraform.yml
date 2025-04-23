@@ -45,7 +45,7 @@ jobs:
       - name: Run TFlint
         id: tflint
         run: tflint --init && tflint -f compact
-        working-directory: ./
+        working-directory: ./terraform
 
       # Checkov Integration
       - name: Install Checkov
@@ -56,24 +56,24 @@ jobs:
       - name: Run Checkov
         id: checkov
         run: checkov -d . --framework terraform --soft-fail
-        working-directory: ./
+        working-directory: ./terraform
 
 
       # Terraform Steps
       - name: Initialize Terraform
         id: init
         run: terraform init -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" -backend-config="key=terraform.tfstate" -backend-config="region=${{ secrets.AWS_REGION }}"
-        working-directory: ./
+        working-directory: ./terraform
 
       - name: Validate Terraform
         id: validate
         run: terraform validate
-        working-directory: ./
+        working-directory: ./terraform
 
       - name: Generate Terraform Plan
         id: plan
         run: terraform plan -no-color -lock=false > plan.txt
-        working-directory: ./
+        working-directory: ./terraform
 
       - name: Create Plan Output Text File
         id: plan_report
@@ -84,7 +84,7 @@ jobs:
           echo "" >> reports/report.txt
           echo "## Terraform Plan Output" >> reports/report.txt
           cat plan.txt >> reports/report.txt
-        working-directory: ./
+        working-directory: ./terraform
       - name: Commit and push the report
         run: |
           git config --global user.name "Raghavarao1201"
@@ -94,7 +94,7 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: ./
+        working-directory: ./terraform
 
       - name: Comment Plan to Pull Request
         uses: actions/github-script@v7
@@ -116,5 +116,5 @@ jobs:
       - name: Apply Terraform
         id: apply
         run: terraform apply -auto-approve -lock=false
-        working-directory: ./
+        working-directory: ./terraform
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
