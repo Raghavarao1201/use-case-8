@@ -21,13 +21,11 @@ provider "aws" {
 }
 
 # Random ID for Unique Resource Names
-
 resource "random_id" "suffix" {
   byte_length = 8
 }
 
 # S3 Buckets
-
 resource "aws_s3_bucket" "source_bucket" {
   bucket = "image-upload-source-bucket-${random_id.suffix.hex}" # Unique bucket name
 
@@ -67,7 +65,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "processed_sse" {
 }
 
 # IAM Role and Policy for Lambda Execution
-
 resource "aws_iam_role" "lambda_execution_role" {
   name = "lambda-image-processor-role-${random_id.suffix.hex}"
   assume_role_policy = jsonencode({
@@ -127,14 +124,20 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_execution_policy.arn
 }
 
-# Lambda Function
+# Archive the Lambda Function Code
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/lambda_image_processor"
+  output_path = "${path.module}/lambda_image_processor/lambda.zip"
+}
 
+# Lambda Function
 resource "aws_lambda_function" "image_processor_lambda" {
   function_name    = "image-processor-lambda-${random_id.suffix.hex}"
   runtime          = "python3.9" # Ensure this matches your Lambda runtime
   handler          = "lambda_function.lambda_handler" # Adjust if your handler is different
-  filename         = "./lambda_image_processor/lambda.zip" # Correct path to your ZIP
-  source_code_hash = filebase64sha256("./lambda_image_processor/lambda.zip") # Hash of your ZIP
+  filename         = data.archive_file.lambda_zip.output_path # Correct path to your ZIP
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256 # Hash of your ZIP
   role             = aws_iam_role.lambda_execution_role.arn
   memory_size      = 256 # Adjust as needed
   timeout          = 30  # Adjust as needed
@@ -156,7 +159,6 @@ resource "aws_lambda_function" "image_processor_lambda" {
 }
 
 # S3 Event Trigger for Lambda
-
 resource "aws_s3_bucket_notification" "image_upload_trigger" {
   bucket = aws_s3_bucket.source_bucket.id
 
@@ -170,7 +172,6 @@ resource "aws_s3_bucket_notification" "image_upload_trigger" {
 }
 
 # Allow S3 to invoke the Lambda function
-
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3Invocation"
   action        = "lambda:InvokeFunction"
@@ -183,6 +184,5 @@ resource "aws_lambda_permission" "allow_s3" {
 }
 
 # Data Sources
-
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
