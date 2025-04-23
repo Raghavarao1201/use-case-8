@@ -2,21 +2,13 @@
 This file was generated during the github actions workflow run.
 
 ## Terraform Plan Output
-[command]/home/runner/work/_temp/5a3188df-fa9a-4127-9572-d2538ea786cd/terraform-bin plan -no-color -lock=false
-random_id.suffix: Refreshing state... [id=X6h7MxB4kek]
+[command]/home/runner/work/_temp/19587fc6-ff48-4e12-97fe-381c59ff8bf0/terraform-bin plan -no-color -lock=false
 data.archive_file.lambda_zip: Reading...
-data.archive_file.lambda_zip: Read complete after 0s [id=8749e4211ca99cade9b076b813b5cf495bc60174]
 data.aws_caller_identity.current: Reading...
 data.aws_region.current: Reading...
-aws_iam_role.lambda_execution_role: Refreshing state... [id=lambda-image-processor-role-5fa87b33107891e9]
-aws_s3_bucket.source_bucket: Refreshing state... [id=image-upload-source-bucket-5fa87b33107891e9]
-aws_s3_bucket.processed_bucket: Refreshing state... [id=processed-image-destination-bucket-5fa87b33107891e9]
 data.aws_region.current: Read complete after 0s [id=us-east-1]
 data.aws_caller_identity.current: Read complete after 0s [id=154767946691]
-aws_s3_bucket_server_side_encryption_configuration.source_sse: Refreshing state... [id=image-upload-source-bucket-5fa87b33107891e9]
-aws_iam_policy.lambda_execution_policy: Refreshing state... [id=arn:aws:iam::154767946691:policy/lambda-image-processor-policy-5fa87b33107891e9]
-aws_s3_bucket_server_side_encryption_configuration.processed_sse: Refreshing state... [id=processed-image-destination-bucket-5fa87b33107891e9]
-aws_iam_role_policy_attachment.lambda_execution_policy_attachment: Refreshing state... [id=lambda-image-processor-role-5fa87b33107891e9-20250423080403501200000001]
+data.archive_file.lambda_zip: Read complete after 1s [id=7fe8f9d3cadb61152e443bd7749102e6d5bb1f40]
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
@@ -24,13 +16,72 @@ plan. Resource actions are indicated with the following symbols:
 
 Terraform will perform the following actions:
 
+  # aws_iam_policy.lambda_execution_policy will be created
+  + resource "aws_iam_policy" "lambda_execution_policy" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + description      = "IAM policy for Lambda to access S3 and CloudWatch Logs"
+      + id               = (known after apply)
+      + name             = (known after apply)
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # aws_iam_role.lambda_execution_role will be created
+  + resource "aws_iam_role" "lambda_execution_role" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "lambda.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags                  = {
+          + "Environment" = "dev"
+          + "Name"        = "Lambda Execution Role for Image Processor"
+        }
+      + tags_all              = {
+          + "Environment" = "dev"
+          + "Name"        = "Lambda Execution Role for Image Processor"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.lambda_execution_policy_attachment will be created
+  + resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = (known after apply)
+    }
+
   # aws_lambda_function.image_processor_lambda will be created
   + resource "aws_lambda_function" "image_processor_lambda" {
       + architectures                  = (known after apply)
       + arn                            = (known after apply)
       + code_sha256                    = (known after apply)
       + filename                       = "./lambda_image_processor/lambda.zip"
-      + function_name                  = "image-processor-lambda-5fa87b33107891e9"
+      + function_name                  = (known after apply)
       + handler                        = "lambda_function.lambda_handler"
       + id                             = (known after apply)
       + invoke_arn                     = (known after apply)
@@ -41,12 +92,12 @@ Terraform will perform the following actions:
       + qualified_arn                  = (known after apply)
       + qualified_invoke_arn           = (known after apply)
       + reserved_concurrent_executions = -1
-      + role                           = "arn:aws:iam::154767946691:role/lambda-image-processor-role-5fa87b33107891e9"
+      + role                           = (known after apply)
       + runtime                        = "python3.9"
       + signing_job_arn                = (known after apply)
       + signing_profile_version_arn    = (known after apply)
       + skip_destroy                   = false
-      + source_code_hash               = "7uogEv/XjfY6pqRqOBRrdTMx8Ov7aLVWG9SITKfUvoQ="
+      + source_code_hash               = "pPhI1Rbzxc727vhCgeD1kAcfuAewXMlJ4YQFEZXsBY8="
       + source_code_size               = (known after apply)
       + tags                           = {
           + "Environment" = "dev"
@@ -60,9 +111,7 @@ Terraform will perform the following actions:
       + version                        = (known after apply)
 
       + environment {
-          + variables = {
-              + "PROCESSED_BUCKET_NAME" = "processed-image-destination-bucket-5fa87b33107891e9"
-            }
+          + variables = (known after apply)
         }
 
       + ephemeral_storage (known after apply)
@@ -77,18 +126,110 @@ Terraform will perform the following actions:
   # aws_lambda_permission.allow_s3 will be created
   + resource "aws_lambda_permission" "allow_s3" {
       + action              = "lambda:InvokeFunction"
-      + function_name       = "image-processor-lambda-5fa87b33107891e9"
+      + function_name       = (known after apply)
       + id                  = (known after apply)
       + principal           = "s3.amazonaws.com"
       + source_account      = "154767946691"
-      + source_arn          = "arn:aws:s3:::image-upload-source-bucket-5fa87b33107891e9"
+      + source_arn          = (known after apply)
       + statement_id        = "AllowS3Invocation"
       + statement_id_prefix = (known after apply)
     }
 
+  # aws_s3_bucket.processed_bucket will be created
+  + resource "aws_s3_bucket" "processed_bucket" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = (known after apply)
+      + bucket_domain_name          = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Environment" = "dev"
+          + "Name"        = "Processed Image Destination Bucket"
+        }
+      + tags_all                    = {
+          + "Environment" = "dev"
+          + "Name"        = "Processed Image Destination Bucket"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # aws_s3_bucket.source_bucket will be created
+  + resource "aws_s3_bucket" "source_bucket" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = (known after apply)
+      + bucket_domain_name          = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags                        = {
+          + "Environment" = "dev"
+          + "Name"        = "Image Upload Source Bucket"
+        }
+      + tags_all                    = {
+          + "Environment" = "dev"
+          + "Name"        = "Image Upload Source Bucket"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
   # aws_s3_bucket_notification.image_upload_trigger will be created
   + resource "aws_s3_bucket_notification" "image_upload_trigger" {
-      + bucket      = "image-upload-source-bucket-5fa87b33107891e9"
+      + bucket      = (known after apply)
       + eventbridge = false
       + id          = (known after apply)
 
@@ -102,13 +243,49 @@ Terraform will perform the following actions:
         }
     }
 
-Plan: 3 to add, 0 to change, 0 to destroy.
+  # aws_s3_bucket_server_side_encryption_configuration.processed_sse will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "processed_sse" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+
+      + rule {
+          + apply_server_side_encryption_by_default {
+              + sse_algorithm     = "AES256"
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # aws_s3_bucket_server_side_encryption_configuration.source_sse will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "source_sse" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+
+      + rule {
+          + apply_server_side_encryption_by_default {
+              + sse_algorithm     = "AES256"
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # random_id.suffix will be created
+  + resource "random_id" "suffix" {
+      + b64_std     = (known after apply)
+      + b64_url     = (known after apply)
+      + byte_length = 8
+      + dec         = (known after apply)
+      + hex         = (known after apply)
+      + id          = (known after apply)
+    }
+
+Plan: 11 to add, 0 to change, 0 to destroy.
 
 ─────────────────────────────────────────────────────────────────────────────
 
 Note: You didn't use the -out option to save this plan, so Terraform can't
 guarantee to take exactly these actions if you run "terraform apply" now.
 ::debug::Terraform exited with code 0.
-::debug::stdout: random_id.suffix: Refreshing state... [id=X6h7MxB4kek]%0Adata.archive_file.lambda_zip: Reading...%0Adata.archive_file.lambda_zip: Read complete after 0s [id=8749e4211ca99cade9b076b813b5cf495bc60174]%0Adata.aws_caller_identity.current: Reading...%0Adata.aws_region.current: Reading...%0Aaws_iam_role.lambda_execution_role: Refreshing state... [id=lambda-image-processor-role-5fa87b33107891e9]%0Aaws_s3_bucket.source_bucket: Refreshing state... [id=image-upload-source-bucket-5fa87b33107891e9]%0Aaws_s3_bucket.processed_bucket: Refreshing state... [id=processed-image-destination-bucket-5fa87b33107891e9]%0Adata.aws_region.current: Read complete after 0s [id=us-east-1]%0Adata.aws_caller_identity.current: Read complete after 0s [id=154767946691]%0Aaws_s3_bucket_server_side_encryption_configuration.source_sse: Refreshing state... [id=image-upload-source-bucket-5fa87b33107891e9]%0Aaws_iam_policy.lambda_execution_policy: Refreshing state... [id=arn:aws:iam::154767946691:policy/lambda-image-processor-policy-5fa87b33107891e9]%0Aaws_s3_bucket_server_side_encryption_configuration.processed_sse: Refreshing state... [id=processed-image-destination-bucket-5fa87b33107891e9]%0Aaws_iam_role_policy_attachment.lambda_execution_policy_attachment: Refreshing state... [id=lambda-image-processor-role-5fa87b33107891e9-20250423080403501200000001]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  + create%0A%0ATerraform will perform the following actions:%0A%0A  # aws_lambda_function.image_processor_lambda will be created%0A  + resource "aws_lambda_function" "image_processor_lambda" {%0A      + architectures                  = (known after apply)%0A      + arn                            = (known after apply)%0A      + code_sha256                    = (known after apply)%0A      + filename                       = "./lambda_image_processor/lambda.zip"%0A      + function_name                  = "image-processor-lambda-5fa87b33107891e9"%0A      + handler                        = "lambda_function.lambda_handler"%0A      + id                             = (known after apply)%0A      + invoke_arn                     = (known after apply)%0A      + last_modified                  = (known after apply)%0A      + memory_size                    = 256%0A      + package_type                   = "Zip"%0A      + publish                        = false%0A      + qualified_arn                  = (known after apply)%0A      + qualified_invoke_arn           = (known after apply)%0A      + reserved_concurrent_executions = -1%0A      + role                           = "arn:aws:iam::154767946691:role/lambda-image-processor-role-5fa87b33107891e9"%0A      + runtime                        = "python3.9"%0A      + signing_job_arn                = (known after apply)%0A      + signing_profile_version_arn    = (known after apply)%0A      + skip_destroy                   = false%0A      + source_code_hash               = "7uogEv/XjfY6pqRqOBRrdTMx8Ov7aLVWG9SITKfUvoQ="%0A      + source_code_size               = (known after apply)%0A      + tags                           = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Image Processor Lambda"%0A        }%0A      + tags_all                       = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Image Processor Lambda"%0A        }%0A      + timeout                        = 30%0A      + version                        = (known after apply)%0A%0A      + environment {%0A          + variables = {%0A              + "PROCESSED_BUCKET_NAME" = "processed-image-destination-bucket-5fa87b33107891e9"%0A            }%0A        }%0A%0A      + ephemeral_storage (known after apply)%0A%0A      + logging_config (known after apply)%0A%0A      + tracing_config {%0A          + mode = "Active"%0A        }%0A    }%0A%0A  # aws_lambda_permission.allow_s3 will be created%0A  + resource "aws_lambda_permission" "allow_s3" {%0A      + action              = "lambda:InvokeFunction"%0A      + function_name       = "image-processor-lambda-5fa87b33107891e9"%0A      + id                  = (known after apply)%0A      + principal           = "s3.amazonaws.com"%0A      + source_account      = "154767946691"%0A      + source_arn          = "arn:aws:s3:::image-upload-source-bucket-5fa87b33107891e9"%0A      + statement_id        = "AllowS3Invocation"%0A      + statement_id_prefix = (known after apply)%0A    }%0A%0A  # aws_s3_bucket_notification.image_upload_trigger will be created%0A  + resource "aws_s3_bucket_notification" "image_upload_trigger" {%0A      + bucket      = "image-upload-source-bucket-5fa87b33107891e9"%0A      + eventbridge = false%0A      + id          = (known after apply)%0A%0A      + lambda_function {%0A          + events              = [%0A              + "s3:ObjectCreated:*",%0A            ]%0A          + filter_prefix       = "uploads/"%0A          + id                  = (known after apply)%0A          + lambda_function_arn = (known after apply)%0A        }%0A    }%0A%0APlan: 3 to add, 0 to change, 0 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
+::debug::stdout: data.archive_file.lambda_zip: Reading...%0Adata.aws_caller_identity.current: Reading...%0Adata.aws_region.current: Reading...%0Adata.aws_region.current: Read complete after 0s [id=us-east-1]%0Adata.aws_caller_identity.current: Read complete after 0s [id=154767946691]%0Adata.archive_file.lambda_zip: Read complete after 1s [id=7fe8f9d3cadb61152e443bd7749102e6d5bb1f40]%0A%0ATerraform used the selected providers to generate the following execution%0Aplan. Resource actions are indicated with the following symbols:%0A  + create%0A%0ATerraform will perform the following actions:%0A%0A  # aws_iam_policy.lambda_execution_policy will be created%0A  + resource "aws_iam_policy" "lambda_execution_policy" {%0A      + arn              = (known after apply)%0A      + attachment_count = (known after apply)%0A      + description      = "IAM policy for Lambda to access S3 and CloudWatch Logs"%0A      + id               = (known after apply)%0A      + name             = (known after apply)%0A      + name_prefix      = (known after apply)%0A      + path             = "/"%0A      + policy           = (known after apply)%0A      + policy_id        = (known after apply)%0A      + tags_all         = (known after apply)%0A    }%0A%0A  # aws_iam_role.lambda_execution_role will be created%0A  + resource "aws_iam_role" "lambda_execution_role" {%0A      + arn                   = (known after apply)%0A      + assume_role_policy    = jsonencode(%0A            {%0A              + Statement = [%0A                  + {%0A                      + Action    = "sts:AssumeRole"%0A                      + Effect    = "Allow"%0A                      + Principal = {%0A                          + Service = "lambda.amazonaws.com"%0A                        }%0A                    },%0A                ]%0A              + Version   = "2012-10-17"%0A            }%0A        )%0A      + create_date           = (known after apply)%0A      + force_detach_policies = false%0A      + id                    = (known after apply)%0A      + managed_policy_arns   = (known after apply)%0A      + max_session_duration  = 3600%0A      + name                  = (known after apply)%0A      + name_prefix           = (known after apply)%0A      + path                  = "/"%0A      + tags                  = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Lambda Execution Role for Image Processor"%0A        }%0A      + tags_all              = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Lambda Execution Role for Image Processor"%0A        }%0A      + unique_id             = (known after apply)%0A%0A      + inline_policy (known after apply)%0A    }%0A%0A  # aws_iam_role_policy_attachment.lambda_execution_policy_attachment will be created%0A  + resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {%0A      + id         = (known after apply)%0A      + policy_arn = (known after apply)%0A      + role       = (known after apply)%0A    }%0A%0A  # aws_lambda_function.image_processor_lambda will be created%0A  + resource "aws_lambda_function" "image_processor_lambda" {%0A      + architectures                  = (known after apply)%0A      + arn                            = (known after apply)%0A      + code_sha256                    = (known after apply)%0A      + filename                       = "./lambda_image_processor/lambda.zip"%0A      + function_name                  = (known after apply)%0A      + handler                        = "lambda_function.lambda_handler"%0A      + id                             = (known after apply)%0A      + invoke_arn                     = (known after apply)%0A      + last_modified                  = (known after apply)%0A      + memory_size                    = 256%0A      + package_type                   = "Zip"%0A      + publish                        = false%0A      + qualified_arn                  = (known after apply)%0A      + qualified_invoke_arn           = (known after apply)%0A      + reserved_concurrent_executions = -1%0A      + role                           = (known after apply)%0A      + runtime                        = "python3.9"%0A      + signing_job_arn                = (known after apply)%0A      + signing_profile_version_arn    = (known after apply)%0A      + skip_destroy                   = false%0A      + source_code_hash               = "pPhI1Rbzxc727vhCgeD1kAcfuAewXMlJ4YQFEZXsBY8="%0A      + source_code_size               = (known after apply)%0A      + tags                           = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Image Processor Lambda"%0A        }%0A      + tags_all                       = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Image Processor Lambda"%0A        }%0A      + timeout                        = 30%0A      + version                        = (known after apply)%0A%0A      + environment {%0A          + variables = (known after apply)%0A        }%0A%0A      + ephemeral_storage (known after apply)%0A%0A      + logging_config (known after apply)%0A%0A      + tracing_config {%0A          + mode = "Active"%0A        }%0A    }%0A%0A  # aws_lambda_permission.allow_s3 will be created%0A  + resource "aws_lambda_permission" "allow_s3" {%0A      + action              = "lambda:InvokeFunction"%0A      + function_name       = (known after apply)%0A      + id                  = (known after apply)%0A      + principal           = "s3.amazonaws.com"%0A      + source_account      = "154767946691"%0A      + source_arn          = (known after apply)%0A      + statement_id        = "AllowS3Invocation"%0A      + statement_id_prefix = (known after apply)%0A    }%0A%0A  # aws_s3_bucket.processed_bucket will be created%0A  + resource "aws_s3_bucket" "processed_bucket" {%0A      + acceleration_status         = (known after apply)%0A      + acl                         = (known after apply)%0A      + arn                         = (known after apply)%0A      + bucket                      = (known after apply)%0A      + bucket_domain_name          = (known after apply)%0A      + bucket_prefix               = (known after apply)%0A      + bucket_regional_domain_name = (known after apply)%0A      + force_destroy               = false%0A      + hosted_zone_id              = (known after apply)%0A      + id                          = (known after apply)%0A      + object_lock_enabled         = (known after apply)%0A      + policy                      = (known after apply)%0A      + region                      = (known after apply)%0A      + request_payer               = (known after apply)%0A      + tags                        = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Processed Image Destination Bucket"%0A        }%0A      + tags_all                    = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Processed Image Destination Bucket"%0A        }%0A      + website_domain              = (known after apply)%0A      + website_endpoint            = (known after apply)%0A%0A      + cors_rule (known after apply)%0A%0A      + grant (known after apply)%0A%0A      + lifecycle_rule (known after apply)%0A%0A      + logging (known after apply)%0A%0A      + object_lock_configuration (known after apply)%0A%0A      + replication_configuration (known after apply)%0A%0A      + server_side_encryption_configuration (known after apply)%0A%0A      + versioning (known after apply)%0A%0A      + website (known after apply)%0A    }%0A%0A  # aws_s3_bucket.source_bucket will be created%0A  + resource "aws_s3_bucket" "source_bucket" {%0A      + acceleration_status         = (known after apply)%0A      + acl                         = (known after apply)%0A      + arn                         = (known after apply)%0A      + bucket                      = (known after apply)%0A      + bucket_domain_name          = (known after apply)%0A      + bucket_prefix               = (known after apply)%0A      + bucket_regional_domain_name = (known after apply)%0A      + force_destroy               = false%0A      + hosted_zone_id              = (known after apply)%0A      + id                          = (known after apply)%0A      + object_lock_enabled         = (known after apply)%0A      + policy                      = (known after apply)%0A      + region                      = (known after apply)%0A      + request_payer               = (known after apply)%0A      + tags                        = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Image Upload Source Bucket"%0A        }%0A      + tags_all                    = {%0A          + "Environment" = "dev"%0A          + "Name"        = "Image Upload Source Bucket"%0A        }%0A      + website_domain              = (known after apply)%0A      + website_endpoint            = (known after apply)%0A%0A      + cors_rule (known after apply)%0A%0A      + grant (known after apply)%0A%0A      + lifecycle_rule (known after apply)%0A%0A      + logging (known after apply)%0A%0A      + object_lock_configuration (known after apply)%0A%0A      + replication_configuration (known after apply)%0A%0A      + server_side_encryption_configuration (known after apply)%0A%0A      + versioning (known after apply)%0A%0A      + website (known after apply)%0A    }%0A%0A  # aws_s3_bucket_notification.image_upload_trigger will be created%0A  + resource "aws_s3_bucket_notification" "image_upload_trigger" {%0A      + bucket      = (known after apply)%0A      + eventbridge = false%0A      + id          = (known after apply)%0A%0A      + lambda_function {%0A          + events              = [%0A              + "s3:ObjectCreated:*",%0A            ]%0A          + filter_prefix       = "uploads/"%0A          + id                  = (known after apply)%0A          + lambda_function_arn = (known after apply)%0A        }%0A    }%0A%0A  # aws_s3_bucket_server_side_encryption_configuration.processed_sse will be created%0A  + resource "aws_s3_bucket_server_side_encryption_configuration" "processed_sse" {%0A      + bucket = (known after apply)%0A      + id     = (known after apply)%0A%0A      + rule {%0A          + apply_server_side_encryption_by_default {%0A              + sse_algorithm     = "AES256"%0A                # (1 unchanged attribute hidden)%0A            }%0A        }%0A    }%0A%0A  # aws_s3_bucket_server_side_encryption_configuration.source_sse will be created%0A  + resource "aws_s3_bucket_server_side_encryption_configuration" "source_sse" {%0A      + bucket = (known after apply)%0A      + id     = (known after apply)%0A%0A      + rule {%0A          + apply_server_side_encryption_by_default {%0A              + sse_algorithm     = "AES256"%0A                # (1 unchanged attribute hidden)%0A            }%0A        }%0A    }%0A%0A  # random_id.suffix will be created%0A  + resource "random_id" "suffix" {%0A      + b64_std     = (known after apply)%0A      + b64_url     = (known after apply)%0A      + byte_length = 8%0A      + dec         = (known after apply)%0A      + hex         = (known after apply)%0A      + id          = (known after apply)%0A    }%0A%0APlan: 11 to add, 0 to change, 0 to destroy.%0A%0A─────────────────────────────────────────────────────────────────────────────%0A%0ANote: You didn't use the -out option to save this plan, so Terraform can't%0Aguarantee to take exactly these actions if you run "terraform apply" now.%0A
 ::debug::stderr: 
 ::debug::exitcode: 0
