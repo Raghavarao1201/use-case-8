@@ -161,7 +161,7 @@ resource "aws_s3_bucket_notification" "image_upload_trigger" {
   bucket = aws_s3_bucket.source_bucket.id
 
   lambda_function {
-    function_arn = aws_lambda_function.image_processor_lambda.arn
+    lambda_function_arn = aws_lambda_function.image_processor_lambda.arn
     events       = ["s3:ObjectCreated:*"] # Trigger on all object creations
     filter_prefix = "uploads/" # Optional: Only trigger for images in the 'uploads/' prefix
   }
