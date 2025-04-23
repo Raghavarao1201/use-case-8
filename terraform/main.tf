@@ -127,8 +127,8 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 # Archive the Lambda Function Code
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/lambda_image_processor"
-  output_path = "${path.module}/lambda_image_processor/lambda.zip"
+  source_dir  = "./terraform/lambda_image_processor"
+  output_path = "./terraform/lambda_image_processor/lambda.zip"
 }
 
 # Lambda Function
