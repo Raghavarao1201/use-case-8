@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-1" # Or your preferred AWS region
 }
 
 # Random ID for Unique Resource Names
@@ -45,25 +45,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "source_sse" {
       sse_algorithm = "AES256"
     }
   }
-}
-
-resource "aws_s3_bucket_policy" "source_bucket_policy" {
-  bucket = aws_s3_bucket.source_bucket.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = [
-          "s3:GetObject"
-        ],
-        Effect = "Allow",
-        Principal = {
-          AWS = [aws_iam_role.lambda_execution_role.arn]
-        },
-        Resource = "${aws_s3_bucket.source_bucket.arn}/*"
-      }
-    ]
-  })
 }
 
 resource "aws_s3_bucket" "processed_bucket" {
@@ -146,15 +127,17 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_execution_policy.arn
 }
 
+# Lambda Function
+
 resource "aws_lambda_function" "image_processor_lambda" {
   function_name    = "image-processor-lambda-${random_id.suffix.hex}"
-  runtime          = "python3.9"
-  handler          = "lambda_function.lambda_handler"
-  filename         = "./lambda.zip"
-  source_code_hash = filebase64sha256("./lambda.zip")
+  runtime          = "python3.9" # Ensure this matches your Lambda runtime
+  handler          = "lambda_function.lambda_handler" # Adjust if your handler is different
+  filename         = "./lambda_image_processor/lambda.zip" # Correct path to your ZIP
+  source_code_hash = filebase64sha256("./lambda_image_processor/lambda.zip") # Hash of your ZIP
   role             = aws_iam_role.lambda_execution_role.arn
-  memory_size      = 256
-  timeout          = 30
+  memory_size      = 256 # Adjust as needed
+  timeout          = 30  # Adjust as needed
 
   environment {
     variables = {
@@ -163,10 +146,8 @@ resource "aws_lambda_function" "image_processor_lambda" {
   }
 
   tracing_config {
-    mode = "Active" # Enable X-Ray tracing
+    mode = "Active" # Enable X-Ray tracing if desired
   }
-
-  depends_on = [aws_iam_role_policy_attachment.lambda_execution_policy_attachment]
 
   tags = {
     Name        = "Image Processor Lambda"
@@ -180,15 +161,16 @@ resource "aws_s3_bucket_notification" "image_upload_trigger" {
   bucket = aws_s3_bucket.source_bucket.id
 
   lambda_function {
-    lambda_function_arn = aws_lambda_function.image_processor_lambda.arn
-    events       = ["s3:ObjectCreated:*"]
-    filter_prefix = "uploads/" # Optional: Trigger only for objects in the 'uploads/' prefix
+    function_arn = aws_lambda_function.image_processor_lambda.arn
+    events       = ["s3:ObjectCreated:*"] # Trigger on all object creations
+    filter_prefix = "uploads/" # Optional: Only trigger for images in the 'uploads/' prefix
   }
 
   depends_on = [aws_lambda_function.image_processor_lambda]
 }
 
 # Allow S3 to invoke the Lambda function
+
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3Invocation"
   action        = "lambda:InvokeFunction"
