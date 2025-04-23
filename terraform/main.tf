@@ -29,11 +29,6 @@ resource "aws_s3_bucket" "source_bucket" {
   }
 }
 
-resource "aws_s3_bucket_acl" "source_acl" {
-  bucket = aws_s3_bucket.source_bucket.id
-  acl    = "private"
-}
-
 resource "aws_s3_bucket_server_side_encryption_configuration" "source_sse" {
   bucket = aws_s3_bucket.source_bucket.id
 
@@ -70,11 +65,6 @@ resource "aws_s3_bucket" "processed_bucket" {
     Name        = "Processed Image Destination Bucket"
     Environment = "dev"
   }
-}
-
-resource "aws_s3_bucket_acl" "processed_acl" {
-  bucket = aws_s3_bucket.processed_bucket.id
-  acl    = "private"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "processed_sse" {
