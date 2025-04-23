@@ -174,7 +174,7 @@ resource "aws_lambda_function" "image_processor_lambda" {
     mode = "Active" # Enable X-Ray tracing
   }
 
-  depends_on = [aws_iam_role_policy_attachment.lambda_execution_policy_attachment]
+  depends_on = [aws_iam_role_policy_attachment.lambda_execution_policy_attachment, data.archive_file.lambda_zip]
 
   tags = {
     Name        = "Image Processor Lambda"
