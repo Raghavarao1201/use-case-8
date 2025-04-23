@@ -127,8 +127,8 @@ resource "aws_iam_role_policy_attachment" "lambda_execution_policy_attachment" {
 # Archive the Lambda Function Code
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_dir  = "./terraform/lambda_image_processor"
-  output_path = "./terraform/lambda_image_processor/lambda.zip"
+  source_dir  = "${path.module}/lambda_image_processor"
+  output_path = "${path.module}/lambda_image_processor/lambda.zip"
 }
 
 # Lambda Function
@@ -158,19 +158,6 @@ resource "aws_lambda_function" "image_processor_lambda" {
   }
 }
 
-# S3 Event Trigger for Lambda
-resource "aws_s3_bucket_notification" "image_upload_trigger" {
-  bucket = aws_s3_bucket.source_bucket.id
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.image_processor_lambda.arn
-    events       = ["s3:ObjectCreated:*"] # Trigger on all object creations
-    filter_prefix = "uploads/" # Optional: Only trigger for images in the 'uploads/' prefix
-  }
-
-  depends_on = [aws_lambda_function.image_processor_lambda]
-}
-
 # Allow S3 to invoke the Lambda function
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3Invocation"
@@ -179,8 +166,22 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.source_bucket.arn
   source_account = data.aws_caller_identity.current.account_id
+}
 
-  depends_on = [aws_s3_bucket_notification.image_upload_trigger]
+# S3 Event Trigger for Lambda
+resource "aws_s3_bucket_notification" "image_upload_trigger" {
+  bucket = aws_s3_bucket.source_bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.image_processor_lambda.arn
+    events              = ["s3:ObjectCreated:*"] # Trigger on all object creations
+    filter_prefix       = "uploads/" # Optional: Only trigger for images in the 'uploads/' prefix
+  }
+
+  depends_on = [
+    aws_lambda_function.image_processor_lambda,
+    aws_lambda_permission.allow_s3
+  ]
 }
 
 # Data Sources
