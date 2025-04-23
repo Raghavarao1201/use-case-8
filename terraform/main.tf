@@ -158,7 +158,7 @@ resource "aws_lambda_function" "image_processor_lambda" {
   function_name    = "image-processor-lambda-${random_id.suffix.hex}"
   runtime          = "python3.9" # Choose your desired runtime
   handler          = "lambda_function.lambda_handler" # Assuming your handler is named this
-  filename         = ${path.module}/lambda_image_processor/lambda.zip
+  filename         = "${path.module}/lambda_image_processor/lambda.zip"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   role             = aws_iam_role.lambda_execution_role.arn
   memory_size      = 256
